@@ -4,9 +4,42 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+        #overlay{
+            background-color: white;
+            height: 100vh;
+            width: 100wh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+        }
+
+        .mindar-ui-overlay{
+            z-index: -1 !important;
+        }
+        #start-button{
+            padding: 20px 40px;
+            background-color: antiquewhite;
+        }
+        
+    </style>
+    <script>   
+
+</script>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: /targets.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <div id="overlay">
+        <button id="start-button" >Commencer l'experience</button>
+    </div>
+    <a-scene
+     style="z-index: -1;"
+      mindar-image="imageTargetSrc: /targets.mind; maxTrack: 2"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
       <a-assets>
         <a-asset-item id="bearModel" src="./male.glb"></a-asset-item>
         <a-asset-item id="raccoonModel" src="./women.glb"></a-asset-item>
@@ -15,42 +48,66 @@
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      <a-sound src="src: url(click.mp3)" autoplay="true" position="0 2 5"></a-sound>
+      <a-sound
+        src="src: url(click.mp3)"
+        autoplay="true"
+        position="0 2 5"
+      ></a-sound>
 
       <!-- Female Model -->
       <a-entity mindar-image-target="targetIndex: 0" id="femaleTarget">
-        <a-gltf-model rotation="450 0 0" position="0 -0.25 0" scale="0.2 0.2 0.2" src="#raccoonModel" animation-mixer></a-gltf-model>
+        <a-gltf-model
+          rotation="450 0 0"
+          position="0 -0.25 0"
+          scale="0.2 0.2 0.2"
+          src="#raccoonModel"
+          animation-mixer
+        ></a-gltf-model>
       </a-entity>
 
       <!-- Male Model -->
       <a-entity mindar-image-target="targetIndex: 1" id="maleTarget">
-        <a-gltf-model rotation="450 0 0" position="0 -0.25 0" scale="0.2 0.2 0.2" src="#bearModel" animation-mixer></a-gltf-model>
+        <a-gltf-model
+          rotation="450 0 0"
+          position="0 -0.25 0"
+          scale="0.2 0.2 0.2"
+          src="#bearModel"
+          animation-mixer
+        ></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
       // Get audio elements
-      const femaleVoice = document.getElementById('female-voice');
-      const maleVoice = document.getElementById('male-voice');
+      const femaleVoice = document.getElementById("female-voice");
+      const maleVoice = document.getElementById("male-voice");
+      const button = document.getElementById("start-button");
+    button.onclick = function () {
+        // Your code to execute when the button is clicked
+        document.getElementById('overlay').style.display='none';
+        console.log('test');
+        
+      };
+      
 
       // Female target events
-      const femaleTarget = document.querySelector('#femaleTarget');
-      femaleTarget.addEventListener('targetFound', () => {
+      const femaleTarget = document.querySelector("#femaleTarget");
+      femaleTarget.addEventListener("targetFound", () => {
         femaleVoice.play();
       });
 
-      femaleTarget.addEventListener('targetLost', () => {
+      femaleTarget.addEventListener("targetLost", () => {
         femaleVoice.pause();
         femaleVoice.currentTime = 0; // Reset to start
       });
 
       // Male target events
-      const maleTarget = document.querySelector('#maleTarget');
-      maleTarget.addEventListener('targetFound', () => {
+      const maleTarget = document.querySelector("#maleTarget");
+      maleTarget.addEventListener("targetFound", () => {
         maleVoice.play();
       });
 
-      maleTarget.addEventListener('targetLost', () => {
+      maleTarget.addEventListener("targetLost", () => {
         maleVoice.pause();
         maleVoice.currentTime = 0; // Reset to start
       });
