@@ -34,7 +34,7 @@
     </div>
     <a-scene
      style="z-index: -1;"
-      mindar-image="imageTargetSrc: /targets.mind; maxTrack: 2"
+      mindar-image="imageTargetSrc: /targets.mind; maxTrack: 2; detectionMode: 'color'; maxDetectRate: 30;minConfidence: 1;"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
@@ -78,6 +78,7 @@
     </a-scene>
 
     <script>
+      
       // Get audio elements
       const femaleVoice = document.getElementById("female-voice");
       const maleVoice = document.getElementById("male-voice");
@@ -88,7 +89,28 @@
         console.log('test');
         
       };
-      
+      let isTargetFound = false;
+
+const debounceDelay = 200; // Adjust this delay as necessary
+
+femaleTarget.addEventListener("targetFound", () => {
+    if (!isTargetFound) {
+        isTargetFound = true;
+        // Handle target found logic here
+        console.log("Female target found");
+    }
+});
+
+femaleTarget.addEventListener("targetLost", () => {
+    if (isTargetFound) {
+        setTimeout(() => {
+            isTargetFound = false;
+            // Handle target lost logic here
+            console.log("Female target lost");
+        }, debounceDelay);
+    }
+});
+
 
       // Female target events
       const femaleTarget = document.querySelector("#femaleTarget");
