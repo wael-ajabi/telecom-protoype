@@ -1,23 +1,59 @@
 <html>
   <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-      <!-- Asset management system for preloading the GLB model -->
+  <body>
+    <a-scene mindar-image="imageTargetSrc: /targets.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
-        <!-- Preload the GLB model -->
-        <a-asset-item id="maleModel" src="./model.glb"></a-asset-item>
+        <a-asset-item id="bearModel" src="./male.glb"></a-asset-item>
+        <a-asset-item id="raccoonModel" src="./women.glb"></a-asset-item>
+        <audio id="female-voice" src="./Voix off female.mp3"></audio>
+        <audio id="male-voice" src="./Voix off male.mp3"></audio>
       </a-assets>
 
-      <!-- AR.js marker -->
-      <a-marker preset="custom" url="pattern-QR_Mere.patt">
-        <!-- Use the preloaded model -->
-        <a-gltf-model src="#maleModel" scale="1 1 1"></a-gltf-model>
-      </a-marker>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-sound src="src: url(click.mp3)" autoplay="true" position="0 2 5"></a-sound>
 
-      <a-entity camera></a-entity>
+      <!-- Female Model -->
+      <a-entity mindar-image-target="targetIndex: 0" id="femaleTarget">
+        <a-gltf-model rotation="450 0 0" position="0 -0.25 0" scale="0.2 0.2 0.2" src="#raccoonModel" animation-mixer></a-gltf-model>
+      </a-entity>
+
+      <!-- Male Model -->
+      <a-entity mindar-image-target="targetIndex: 1" id="maleTarget">
+        <a-gltf-model rotation="450 0 0" position="0 -0.25 0" scale="0.2 0.2 0.2" src="#bearModel" animation-mixer></a-gltf-model>
+      </a-entity>
     </a-scene>
+
+    <script>
+      // Get audio elements
+      const femaleVoice = document.getElementById('female-voice');
+      const maleVoice = document.getElementById('male-voice');
+
+      // Female target events
+      const femaleTarget = document.querySelector('#femaleTarget');
+      femaleTarget.addEventListener('targetFound', () => {
+        femaleVoice.play();
+      });
+
+      femaleTarget.addEventListener('targetLost', () => {
+        femaleVoice.pause();
+        femaleVoice.currentTime = 0; // Reset to start
+      });
+
+      // Male target events
+      const maleTarget = document.querySelector('#maleTarget');
+      maleTarget.addEventListener('targetFound', () => {
+        maleVoice.play();
+      });
+
+      maleTarget.addEventListener('targetLost', () => {
+        maleVoice.pause();
+        maleVoice.currentTime = 0; // Reset to start
+      });
+    </script>
   </body>
 </html>
